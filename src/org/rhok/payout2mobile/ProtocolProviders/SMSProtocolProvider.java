@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.Vector;
 
 import org.rhok.payout2mobile.controllers.CC;
+import org.rhok.payout2mobile.controllers.PolicyController;
 import org.rhok.payout2mobile.model.*;
 
 public class SMSProtocolProvider
@@ -33,11 +34,11 @@ public class SMSProtocolProvider
 	
 	// quote, <Customer.Phone>, <Location>, <Qty> <Product> [, <Qty> <Product>...]
 	public void quote(String phoneVendor, String[] tokens) {
-		String phoneCustomer = tokens[1];
+		String phoneCustomer = tokens[1].trim();
 		PolicyDetails details = new PolicyDetails(Location.parse(tokens[2]));
 		
 		for(int i = 3; i < tokens.length; i++) {
-			String parts[] = tokens[i].split(" ");
+			String parts[] = tokens[i].trim().split(" ");
 			details.getProducts().add(new ProductQuantity(Integer.parseInt(parts[0]), parts[1]));
 		}
 		
@@ -66,6 +67,10 @@ public class SMSProtocolProvider
 						quote.getPremium(), phoneCustomer);
 	}
 	
+	private PolicyController policyController() {
+		return CC.get().policy();
+	}
+	
 	// purchase 
 	public void purchase(String phoneVendor, String[] tokens) {
 		
@@ -73,8 +78,8 @@ public class SMSProtocolProvider
 		Identity vendor = CC.get().identity().find(phoneVendor);
 		
 		// We need to find the last quote and customer
-		Quote lastQuote = CC.get().policy().getLastQuote(vendor);
-		Identity lastCustomer = CC.get().policy().getLastCustomer(vendor);
+		Quote lastQuote = policyController().getLastQuote(vendor);
+		Identity lastCustomer = policyController().getLastCustomer(vendor);
 		String phoneCustomer = lastCustomer.getPhoneNumber();
 		
 		// purchase the quote
@@ -93,7 +98,7 @@ public class SMSProtocolProvider
 		StringBuilder sb = new StringBuilder();
 		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
 		
-		sb.append(String.format("coverage %s %s %s ", 
+		sb.append(String.format("coverage #: %s exp: %s %s ", 
 				policy.getPolicyId(), 
 				sdf.format(policy.getExpiry()),
 				policy.getDescription()
@@ -101,7 +106,7 @@ public class SMSProtocolProvider
 		
 		// Demeter is going to kill me for this line, LOL.
 		for (ProductQuantity product : policy.getQuote().getDetails().getProducts()) {
-			sb.append(String.format("%d%s", 
+			sb.append(String.format("%d %s", 
 					product.getQuantity(), product.getProduct()));
 		}
 		

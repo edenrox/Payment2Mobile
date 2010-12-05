@@ -13,39 +13,41 @@ import com.google.appengine.api.datastore.KeyFactory;
 public class Identity {
 
 	@PrimaryKey
-	@Persistent
-	private Key key;
+	private String phoneNumber;
 	
-	@Persistent
-	private Key parent;
+	//@Persistent
+	private String parent;
 	
 	@Persistent
 	private String name;
 	
 	@Persistent
-	private IdentityType type;
+	private int type;
 	
 	@Persistent
 	private Date created;
 	
-	
-	public Key getKey() {
-		return key;
-	}
-	
 	public IdentityType getType() {
-		return type;
+		for(IdentityType item : IdentityType.values()) {
+			if (item.ordinal() == type) {
+				return item;
+			}
+		}
+		return null;
 	}
 	
-	public String getPhoneNumber() {
-		return "";
-	}
+	public String getPhoneNumber() { return phoneNumber; }
+	public Date getCreated() { return created; }
+	public String getName() { return name; }
 	
-	public Identity(Identity pParent, String identity, String pName, IdentityType pType) {
-		parent = pParent.getKey();
-		key = KeyFactory.createKey(Identity.class.getSimpleName(), identity);
+	public Identity(Identity pParent, String pPhoneNumber, String pName, IdentityType pType) {
+		if (pParent != null) {
+			parent = pParent.getPhoneNumber();
+		}
+		phoneNumber = pPhoneNumber;
 		name = pName;
-		type = pType;
+		type = pType.ordinal();
+		created = new Date();
 	}
 	
 	

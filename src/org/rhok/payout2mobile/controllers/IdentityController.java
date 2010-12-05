@@ -1,6 +1,11 @@
 package org.rhok.payout2mobile.controllers;
 
+import java.util.List;
+
+import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.PersistenceManager;
+import javax.jdo.Query;
+
 import org.rhok.payout2mobile.model.*;
 import com.google.appengine.api.datastore.Key;
 
@@ -9,9 +14,9 @@ public class IdentityController extends AppController {
 	public Identity create(Identity actor, String identifier, String name, IdentityType type) {
 		
 		// Validate the arguments
-		if (actor == null) {
-			throw new NullPointerException("Actor cannot be null");
-		}
+		//if (actor == null) {
+		//	throw new NullPointerException("Actor cannot be null");
+		//}
 		if ((identifier == null) || (identifier.length() < 1)) {
 			throw new NullPointerException("Identifier cannot be null or empty");
 		}
@@ -27,7 +32,7 @@ public class IdentityController extends AppController {
 		// save the item
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		try {
-			pm.makePersistent(item);
+			item = pm.makePersistent(item);
 		} finally {
 			pm.close();
 		}
@@ -35,19 +40,38 @@ public class IdentityController extends AppController {
 		return item;
 	}
 	
-	public Identity find(String identifier) {
+	public Identity find(String pPhoneNumber) {
 		Identity rv = null;
 		
 		// try to find the item in the DB
-		Key key = KeyMaker.key(Identity.class, identifier);
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		try {
-			rv = (Identity) pm.getObjectById(key);
+			rv = (Identity) pm.getObjectById(Identity.class, pPhoneNumber);
+		} catch (JDOObjectNotFoundException ex) {
+			rv = null;
 		} finally {
 			pm.close();
 		}
 		
 		return rv;
+	}
+	
+	public List<Identity> list(IdentityType type) {
+		List<Identity> items = null;
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		
+		Query q = pm.newQuery(Identity.class);
+		q.setFilter("type == typeParam");
+		q.setOrdering("name");
+		q.declareParameters("int typeParam");
+		
+		try {
+			items = (List<Identity>) q.execute(type.ordinal());
+		} finally {
+			q.closeAll();
+		}
+		
+		return items;
 	}
 	
 }

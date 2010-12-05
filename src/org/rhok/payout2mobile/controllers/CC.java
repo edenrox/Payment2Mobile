@@ -3,7 +3,12 @@ package org.rhok.payout2mobile.controllers;
 public class CC {
 	
 	private static CC s_instance;
-	public static CC get() { return s_instance; }
+	public static CC get() {
+		if (s_instance == null) {
+			s_instance = new CC();
+		}
+		return s_instance; 
+	}
 	
 	private ClaimController c_claim;
 	private IdentityController c_identity;

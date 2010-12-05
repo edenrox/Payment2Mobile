@@ -20,7 +20,7 @@ public class ClaimController extends AppController {
 	}
 	
 	private String generateAction(Identity who) {
-		return "report-" + who.getKey().toString();
+		return "report-" + who.getPhoneNumber().toString();
 	}
 
 	public ClaimsReport generateClaimsReport(Identity who, Date start, Date end, Identity insuranceProvider) {

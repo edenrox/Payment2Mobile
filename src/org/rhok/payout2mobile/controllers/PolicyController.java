@@ -10,7 +10,11 @@ import org.rhok.payout2mobile.policyproviders.PolicyProvider;
 
 public class PolicyController {
 	
-	private List<PolicyProvider> m_providers;
+	private Vector<PolicyProvider> m_providers;
+	
+	public PolicyController() {
+		m_providers = new Vector<PolicyProvider>();
+	}
 	
 	public void addProvider(PolicyProvider item) {
 		m_providers.add(item);
@@ -25,7 +29,7 @@ public class PolicyController {
 		
 		// Loop through the insurance providers
 		for(PolicyProvider provider : getPolicyProviders()) {
-			Quote quote = null; //provider.getQuote(policyType, location);
+			Quote quote = provider.getQuote(details);
 			if (quote != null) { 
 				if (bestQuote == null) {
 					bestQuote = quote;
