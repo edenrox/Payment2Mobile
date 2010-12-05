@@ -149,6 +149,9 @@ public class SMSProviderTest extends GoogleDataTest {
 		PolicyController ctl = new PolicyController();
 		SMSTest p = new SMSTest(ctl);
 		
+		// create the measurement station
+		CC.get().identity().create(system, STATION_PHONE, "Measurement Station", IdentityType.MeasurementStation);
+		
 		String message = "measurement, {12.45 45.67}, wind 22.5 m/s";
 		p.parseMessage(STATION_PHONE, message);
 		
