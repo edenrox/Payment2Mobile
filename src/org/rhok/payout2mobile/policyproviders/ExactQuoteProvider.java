@@ -13,7 +13,7 @@ import org.rhok.payout2mobile.model.Quote;
 public class ExactQuoteProvider  implements PolicyProvider {
 
 	private double premium;
-	public static final String PROVIDER_IDENTITY = "+1 455-123-4568";
+	public static final String PROVIDER_IDENTITY = "+1 555-240-1112";
 	public static final String PROVIDER_NAME = "Exact Quote Provider";
 	
 	public ExactQuoteProvider(double pPremium) {

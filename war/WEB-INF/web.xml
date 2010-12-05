@@ -8,9 +8,17 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 		<servlet-name>Payout2Mobile</servlet-name>
 		<servlet-class>org.rhok.payout2mobile.Payout2MobileServlet</servlet-class>
 	</servlet>
+	<servlet>
+		<servlet-name>SMSServlet</servlet-name>
+		<servlet-class>org.rhok.payout2mobile.SMSServlet</servlet-class>
+	</servlet>
 	<servlet-mapping>
 		<servlet-name>Payout2Mobile</servlet-name>
 		<url-pattern>/payout2mobile</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>SMSServlet</servlet-name>
+		<url-pattern>/sms</url-pattern>
 	</servlet-mapping>
 	<welcome-file-list>
 		<welcome-file>index.html</welcome-file>

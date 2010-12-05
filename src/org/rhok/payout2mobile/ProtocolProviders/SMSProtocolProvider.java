@@ -40,11 +40,19 @@ public class SMSProtocolProvider
 	// measurement, <Location>, <Metric> <Magnitude> <Units> [, <Metric> <Magnitude> <Units>]
 	public void measurement(String phoneStation, String[] tokens) {
 		Identity station = CC.get().identity().find(phoneStation);
+		
+		if ((station == null) || (station.getType() != IdentityType.MeasurementStation)) {
+			sendMessage(phoneStation, "invalid message");
+			return;
+		}
+		
 		Location location = Location.parse(tokens[1]);
 		for (int i = 2; i < tokens.length; i++) {
 			String parts[] = tokens[i].trim().split(" ");
 			CC.get().measurement().create(station, location, parts[0], Double.parseDouble(parts[1]), parts[2]);
 		}
+		
+		sendMessage(phoneStation, "measurement received");
 	}
 	
 	// quote, <Customer.Phone>, <Location>, <Qty> <Product> [, <Qty> <Product>...]

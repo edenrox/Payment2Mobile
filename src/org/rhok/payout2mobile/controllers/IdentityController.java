@@ -1,6 +1,7 @@
 package org.rhok.payout2mobile.controllers;
 
 import java.util.List;
+import java.util.Vector;
 
 import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.PersistenceManager;
@@ -23,7 +24,7 @@ public class IdentityController extends AppController {
 		String action = String.format("create-%s", type.toString());
 		ensureCan(actor, action);
 		if (find(identifier) != null) {
-			throw new RuntimeException("Identifier not unique");
+			throw new RuntimeException("Identifier not unique: " + identifier);
 		}
 		
 		// create the item
@@ -56,8 +57,8 @@ public class IdentityController extends AppController {
 		return rv;
 	}
 	
-	public List<Identity> list(IdentityType type) {
-		List<Identity> items = null;
+	public Vector<Identity> list(IdentityType type) {
+		Vector<Identity> items = new Vector<Identity>();
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		Query q = pm.newQuery(Identity.class);
 		try {
@@ -65,7 +66,8 @@ public class IdentityController extends AppController {
 			q.setOrdering("name");
 			q.declareParameters("int typeParam");
 		
-			items = (List<Identity>) q.execute(type.ordinal());
+			// add all to the Vector of items to return
+			items.addAll((List<Identity>) q.execute(type.ordinal()));
 		} finally {
 			q.closeAll();
 		}

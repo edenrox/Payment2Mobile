@@ -1,0 +1,13 @@
+body, table {
+	font-family: Arial;
+	font-size: 12px;
+}
+thead th {
+	text-align: left;
+	font-style: normal;
+	border-bottom: 2px solid #CCCCCC;
+}
+tbody td {
+	border-bottom: 1px solid #D4D4D4;
+	padding: 4px 2px;
+}
