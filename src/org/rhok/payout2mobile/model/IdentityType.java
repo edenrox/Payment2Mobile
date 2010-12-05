@@ -6,5 +6,6 @@ public enum IdentityType {
 	MobileProvider, 
 	InsuranceProvider, 
 	NGO,
-	System
+	System,
+	MeasurementStation
 }

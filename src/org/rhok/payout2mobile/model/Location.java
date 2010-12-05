@@ -1,17 +1,20 @@
 package org.rhok.payout2mobile.model;
 
+import javax.jdo.annotations.*;
+import javax.persistence.Embeddable;
+
+@PersistenceCapable
+@Embeddable
 public class Location {
 
+	@Persistent
 	private double lat;
+	@Persistent 
 	private double lng;
 	
-	public double getLatitude() {
-		return lat;
-	}
+	public double getLatitude() { return lat; }
 	
-	public double getLongitude() {
-		return lng;
-	}
+	public double getLongitude() { return lng; }
 	
 	public Location(double pLat, double pLng) {
 		lat = pLat;

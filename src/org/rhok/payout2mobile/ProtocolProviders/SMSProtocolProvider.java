@@ -1,5 +1,6 @@
 package org.rhok.payout2mobile.ProtocolProviders;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Vector;
 
@@ -22,13 +23,27 @@ public class SMSProtocolProvider
 		// with the message specified
 	}
 	
-	public void parseMessage(String phoneFrom, String message) {
+	public void parseMessage(String phoneFrom, String message) throws ParseException {
 		String tokens[] = message.split(",");
 		
 		if (tokens[0].equals("quote")) {
 			quote(phoneFrom, tokens);
 		} else if (tokens[0].equals("purchase")) {
 			purchase(phoneFrom, tokens);
+		} else if (tokens[0].equals("measurement")) {
+			measurement(phoneFrom, tokens);
+		} else {
+			throw new ParseException("Unknown SMS verb: " + tokens[0], 0);
+		}
+	}
+	
+	// measurement, <Location>, <Metric> <Magnitude> <Units> [, <Metric> <Magnitude> <Units>]
+	public void measurement(String phoneStation, String[] tokens) {
+		Identity station = CC.get().identity().find(phoneStation);
+		Location location = Location.parse(tokens[1]);
+		for (int i = 2; i < tokens.length; i++) {
+			String parts[] = tokens[i].trim().split(" ");
+			CC.get().measurement().create(station, location, parts[0], Double.parseDouble(parts[1]), parts[2]);
 		}
 	}
 	

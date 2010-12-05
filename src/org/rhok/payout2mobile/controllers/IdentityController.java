@@ -59,13 +59,12 @@ public class IdentityController extends AppController {
 	public List<Identity> list(IdentityType type) {
 		List<Identity> items = null;
 		PersistenceManager pm = PMF.get().getPersistenceManager();
-		
 		Query q = pm.newQuery(Identity.class);
-		q.setFilter("type == typeParam");
-		q.setOrdering("name");
-		q.declareParameters("int typeParam");
-		
 		try {
+			q.setFilter("type == typeParam");
+			q.setOrdering("name");
+			q.declareParameters("int typeParam");
+		
 			items = (List<Identity>) q.execute(type.ordinal());
 		} finally {
 			q.closeAll();

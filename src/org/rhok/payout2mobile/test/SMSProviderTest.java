@@ -1,5 +1,6 @@
 package org.rhok.payout2mobile.test;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
 import org.junit.*;
@@ -20,6 +21,8 @@ public class SMSProviderTest extends GoogleDataTest {
 	public static final String VENDOR_PHONE = "+1 222-123-4567";
 	public static final String VENDOR_NAME = "Vendor Jack";
 	public static final double PREMIUM = 0.249;
+	public static final String STATION_PHONE = "+1 555-123-7777";
+	public static final double EPSILON = 0.0001;
 	
 	@Before
 	public void setUp() {
@@ -29,7 +32,7 @@ public class SMSProviderTest extends GoogleDataTest {
 	}
 	
 	@Test
-	public void testQuote() {
+	public void testQuote() throws ParseException {
 		PolicyController ctl = new PolicyController();
 		SMSTest p = new SMSTest(ctl);
 		
@@ -75,7 +78,7 @@ public class SMSProviderTest extends GoogleDataTest {
 	}
 	
 	@Test
-	public void testPurchase() {
+	public void testPurchase() throws ParseException {
 		PolicyController ctl = new PolicyController();
 		SMSTest p = new SMSTest(ctl);
 		
@@ -118,7 +121,7 @@ public class SMSProviderTest extends GoogleDataTest {
 	}
 	
 	@Test
-	public void testBogusPurchase() {
+	public void testBogusPurchase() throws ParseException {
 		PolicyController ctl = new PolicyController();
 		SMSTest p = new SMSTest(ctl);
 		
@@ -130,6 +133,39 @@ public class SMSProviderTest extends GoogleDataTest {
 		assertEquals(VENDOR_PHONE, p.getLastRecipient());
 		String confirmMessage = "Policy Not Purchased";
 		assertEquals(confirmMessage, p.getLastMessage());
+	}
+	
+	@Test(expected = ParseException.class)
+	public void testBogusMessage() throws ParseException {
+		PolicyController ctl = new PolicyController();
+		SMSTest p = new SMSTest(ctl);
+		
+		String message = "bogus";
+		p.parseMessage(STATION_PHONE, message);
+	}
+	
+	@Test
+	public void testMeasurement() throws ParseException {
+		PolicyController ctl = new PolicyController();
+		SMSTest p = new SMSTest(ctl);
+		
+		String message = "measurement, {12.45 45.67}, wind 22.5 m/s";
+		p.parseMessage(STATION_PHONE, message);
+		
+		message = "measurement, {12.45 45.67}, rainfall 22.5 mm, wind 4.5 m/s";
+		p.parseMessage(STATION_PHONE, message);
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		MeasurementStatisticsCB cbr = new MeasurementStatisticsCB();
+		CC.get().measurement().iterate("rainfall", sdf.parse("2010-01-01"), sdf.parse("2011-01-01"), cbr);
+		
+		assertEquals(1, cbr.getCount());
+		assertEquals(22.5, cbr.getMaximum(), EPSILON);
+		
+		MeasurementStatisticsCB cbw = new MeasurementStatisticsCB();
+		CC.get().measurement().iterate("wind", sdf.parse("2010-01-01"), sdf.parse("2011-01-01"), cbw);
+		assertEquals(2, cbw.getCount());
+		assertEquals(22.5, cbw.getMaximum(), EPSILON);
 	}
 	
 	/**

@@ -13,7 +13,6 @@ public class CC {
 	private ClaimController c_claim;
 	private IdentityController c_identity;
 	private MeasurementController c_measurement;
-	private MeasurementStationController c_measurementStation;
 	private PolicyController c_policy;
 	
 
@@ -26,9 +25,6 @@ public class CC {
 	public MeasurementController measurement() {
 		return c_measurement;
 	}
-	public MeasurementStationController measurementStation() {
-		return c_measurementStation;
-	}
 	public PolicyController policy() {
 		return c_policy;
 	}
@@ -37,7 +33,6 @@ public class CC {
 		c_claim = new ClaimController();
 		c_identity = new IdentityController();
 		c_measurement = new MeasurementController();
-		c_measurementStation = new MeasurementStationController();
 		c_policy = new PolicyController();
 	}
 	
