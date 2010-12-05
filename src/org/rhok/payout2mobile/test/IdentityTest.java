@@ -1,25 +1,32 @@
 package org.rhok.payout2mobile.test;
 
-import javax.jdo.PersistenceManager;
-
-import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
-import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
-
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import org.rhok.payout2mobile.controllers.IdentityController;
-import org.rhok.payout2mobile.model.Identity;
-import org.rhok.payout2mobile.model.IdentityType;
-import org.rhok.payout2mobile.model.PMF;
-
+import org.rhok.payout2mobile.model.*;
 import static org.junit.Assert.*;
 
 public class IdentityTest extends GoogleDataTest {
-
-
 	
+
+	@Test(expected = NullPointerException.class)
+	public void testNoNullParent() {
+		IdentityController ctl = new IdentityController();
+		ctl.create(null, "phone", "name", IdentityType.Customer);
+	}
+	
+	@Test(expected = NullPointerException.class)
+	public void testNoEmptyPhone() {
+		IdentityController ctl = new IdentityController();
+		ctl.create(system, "", "name", IdentityType.Customer);
+	}
+	
+	@Test(expected = RuntimeException.class)
+	public void testUniquePhoneRequired() {
+		IdentityController ctl = new IdentityController();
+		ctl.create(system, "+1 555-123-4567", "Mark Smith", IdentityType.Customer);
+		ctl.create(system, "+1 555-123-4567", "Mark Jones", IdentityType.Customer);
+	}
+
 	@Test
 	public void testCreateAndProperties() {
 		Identity item = new Identity(null, "+1 555-234-2456", "Jacko Flante", IdentityType.Customer);
@@ -48,7 +55,7 @@ public class IdentityTest extends GoogleDataTest {
 		count = ctl.list(IdentityType.Customer).size();
 		
 		// create the item
-		Identity parent = new Identity(null, "-1", "Parent", IdentityType.System);
+		Identity parent = new Identity(system, "-1", "Parent", IdentityType.System);
 		item = ctl.create(parent, phoneNumber, "Jacko Flante", IdentityType.Customer);
 		
 		// ensure the item was created correctly

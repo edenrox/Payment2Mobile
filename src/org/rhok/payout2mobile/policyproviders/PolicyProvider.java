@@ -8,5 +8,5 @@ public interface PolicyProvider {
 	
 	public Quote getQuote(PolicyDetails details);
 	
-	public Policy purchase(Identity who, Quote quote);
+	public void purchase(Policy policy);
 }

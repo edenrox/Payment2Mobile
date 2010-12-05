@@ -24,7 +24,7 @@ public class PolicyController {
 		return m_providers;
 	}
 	
-	public Quote getBestQuote(Identity who, PolicyDetails details) {
+	public Quote getBestQuote(Identity vendor, Identity customer, PolicyDetails details) {
 		Quote bestQuote = null;		
 		
 		// Loop through the insurance providers
@@ -39,17 +39,67 @@ public class PolicyController {
 			}
 		}
 		
+		// save the quote for later lookup
+		if (bestQuote != null) {
+			persistLastQuote(vendor, customer, bestQuote);
+		}
 		
 		return bestQuote;
 	}
 	
+	public Policy purchasePolicy(Identity customer, Quote quote) {
+		
+		if (customer == null) {
+			throw new NullPointerException("Error, customer cannot be null");
+		}
+		if (quote == null) {
+			throw new NullPointerException("Error, quote cannot be null");
+		}
+		
+		// create the policy
+		Policy policy = new Policy(quote, customer);
+		
+		// find the policy provider
+		PolicyProvider quoteProvider = null;
+		for (PolicyProvider provider : getPolicyProviders()) {
+			if (quote.getProvider().equals(provider.getIdentity())) {
+				quoteProvider = provider;
+			}
+		}
+		
+		// notify the provider of this purchase
+		if (quoteProvider != null) {
+			quoteProvider.purchase(policy);
+		}
+		
+		// save the policy
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		try {
+			pm.makePersistent(policy);
+		} finally {
+			pm.close();
+		}
+		
+		return policy;
+	}
+	
+	
+	
+	protected void persistLastQuote(Identity vendor, Identity customer, Quote quote) {
+		lastQuote = quote;
+		lastCustomer = customer;
+	}
+	
+	private Quote lastQuote;
+	private Identity lastCustomer;
+	
 	public Quote getLastQuote(Identity vendor) {
-		return null;
+		return lastQuote;
 	}
 	
 	
 	public Identity getLastCustomer(Identity vendor) {
-		return null;
+		return lastCustomer;
 	}
 	
 }

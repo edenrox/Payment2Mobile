@@ -50,5 +50,16 @@ public class Identity {
 		created = new Date();
 	}
 	
+	public boolean equals(Object oThat) {
+		if ((oThat != null) && (oThat.getClass() == Identity.class)) {
+			Identity that = ((Identity) oThat);
+			if (this.getPhoneNumber() == null) {
+				return (that.getPhoneNumber() == null);
+			}
+			return this.getPhoneNumber().equals(that.getPhoneNumber());
+		}
+		return super.equals(oThat);
+	}
+	
 	
 }

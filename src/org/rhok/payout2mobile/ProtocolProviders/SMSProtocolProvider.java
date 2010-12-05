@@ -27,7 +27,7 @@ public class SMSProtocolProvider
 		
 		if (tokens[0].equals("quote")) {
 			quote(phoneFrom, tokens);
-		} else if (tokens[1].equals("purchase")) {
+		} else if (tokens[0].equals("purchase")) {
 			purchase(phoneFrom, tokens);
 		}
 	}
@@ -42,16 +42,18 @@ public class SMSProtocolProvider
 			details.getProducts().add(new ProductQuantity(Integer.parseInt(parts[0]), parts[1]));
 		}
 		
+		// load the vendor
+		Identity vendor = CC.get().identity().find(phoneVendor);
+		
 		// get the customer
-		Identity who = CC.get().identity().find(phoneCustomer);
-		if (who == null) {
+		Identity customer = CC.get().identity().find(phoneCustomer);
+		if (customer == null) {
 			// create the customer
-			Identity vendor = CC.get().identity().find(phoneVendor);
-			who = CC.get().identity().create(vendor, phoneCustomer, "", IdentityType.Customer);
+			customer = CC.get().identity().create(vendor, phoneCustomer, "", IdentityType.Customer);
 		}
 		
 		// now we need to pull a best quote
-		Quote bestQuote = CC.get().policy().getBestQuote(who, details);
+		Quote bestQuote = policyController().getBestQuote(vendor, customer, details);
 		
 		// send the quote to the vendor
 		if (bestQuote != null) {
@@ -67,7 +69,7 @@ public class SMSProtocolProvider
 						quote.getPremium(), phoneCustomer);
 	}
 	
-	private PolicyController policyController() {
+	protected PolicyController policyController() {
 		return CC.get().policy();
 	}
 	
@@ -80,25 +82,27 @@ public class SMSProtocolProvider
 		// We need to find the last quote and customer
 		Quote lastQuote = policyController().getLastQuote(vendor);
 		Identity lastCustomer = policyController().getLastCustomer(vendor);
-		String phoneCustomer = lastCustomer.getPhoneNumber();
 		
-		// purchase the quote
-		Policy policy = null;// CC.get().policy().purchaseQuote(lastQuote);
-		
-		if (policy != null) {
-			sendMessage(phoneCustomer, purchaseResponse(policy));
-		} else {
-			sendMessage(phoneVendor, "Policy Not Purchased");
-			sendMessage(phoneCustomer, "Policy Not Purchased");
+		if ((lastQuote != null) && (lastCustomer != null)) { 
+			String phoneCustomer = lastCustomer.getPhoneNumber();
+			
+			// purchase the quote
+			Policy policy = policyController().purchasePolicy(lastCustomer, lastQuote);
+			
+			if (policy != null) {
+				sendMessage(phoneCustomer, purchaseResponse(policy));
+				return;
+			}
 		}
+		sendMessage(phoneVendor, "Policy Not Purchased");
 	}
 	
 	// coverage <PolicyId> <Expiry> <Risk> <Qty><Product>[, <Qty><Product>]
 	protected String purchaseResponse(Policy policy) {
 		StringBuilder sb = new StringBuilder();
-		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+		SimpleDateFormat sdf = new SimpleDateFormat("MMM d, yyyy");
 		
-		sb.append(String.format("coverage #: %s exp: %s %s ", 
+		sb.append(String.format("coverage #: %s exp: %s %s insured: ", 
 				policy.getPolicyId(), 
 				sdf.format(policy.getExpiry()),
 				policy.getDescription()

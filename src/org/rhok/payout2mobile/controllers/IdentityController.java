@@ -14,9 +14,9 @@ public class IdentityController extends AppController {
 	public Identity create(Identity actor, String identifier, String name, IdentityType type) {
 		
 		// Validate the arguments
-		//if (actor == null) {
-		//	throw new NullPointerException("Actor cannot be null");
-		//}
+		if (actor == null) {
+			throw new NullPointerException("Actor cannot be null");
+		}
 		if ((identifier == null) || (identifier.length() < 1)) {
 			throw new NullPointerException("Identifier cannot be null or empty");
 		}
