@@ -1,8 +1,12 @@
+/***************************************
+ * DO NOT REMOVE
+ * License: BSD License (see LICENSE in the root of this project)
+ * Original Author: Ian Hopkins
+ */
 package org.rhok.payout2mobile;
 
 import java.io.IOException;
 import javax.servlet.http.*;
-
 
 @SuppressWarnings("serial")
 public class Payout2MobileServlet extends HttpServlet {

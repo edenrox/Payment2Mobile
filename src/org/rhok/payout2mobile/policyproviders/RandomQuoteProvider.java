@@ -1,9 +1,12 @@
+/***************************************
+ * DO NOT REMOVE
+ * License: BSD License (see LICENSE in the root of this project)
+ * Original Author: Ian Hopkins
+ */
 package org.rhok.payout2mobile.policyproviders;
 
 import java.util.Calendar;
-
 import org.rhok.payout2mobile.controllers.CC;
-import org.rhok.payout2mobile.controllers.IdentityController;
 import org.rhok.payout2mobile.model.*;
 
 public class RandomQuoteProvider implements PolicyProvider {

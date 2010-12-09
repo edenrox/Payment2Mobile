@@ -1,6 +1,9 @@
+/***************************************
+ * DO NOT REMOVE
+ * License: BSD License (see LICENSE in the root of this project)
+ * Original Author: Ian Hopkins
+ */
 package org.rhok.payout2mobile.controllers;
-
-import javax.jdo.PersistenceManager;
 
 import org.rhok.payout2mobile.model.*;
 

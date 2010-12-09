@@ -1,0 +1,25 @@
+[ PROJECT ]
+Payout2Mobile
+
+[ COLLABORATORS ]
+Ian Hopkins (@edenrox)
+Daniel Broome
+Sandeep Chandur
+
+[ DESCRIPTION ]
+This project seeks to build a core service-oriented application to 
+facilitate providing parameterized insurance to farmers (or more broadly 
+anyone).
+
+[ GOALS ]
+ * Provide access to insurance to remote customers
+ * Minimize the cost of providing coverage and paying claims for insurance providers
+ * Provide visibility for governance to ensure claims are paid
+ * Allow
+
+[ BACKGROUND ]
+This project was started as a two day project for Random Hacks of Kindness (RHoK.org) 
+Toronto based on a problem put forward by Laura Boudreau of the World Bank.  The
+original problem definition can be found below:
+ 
+http://wiki.rhok.org/Payout_To_Mobile 

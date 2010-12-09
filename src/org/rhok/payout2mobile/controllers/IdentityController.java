@@ -1,14 +1,16 @@
+/***************************************
+ * DO NOT REMOVE
+ * License: BSD License (see LICENSE in the root of this project)
+ * Original Author: Ian Hopkins
+ */
 package org.rhok.payout2mobile.controllers;
 
 import java.util.List;
 import java.util.Vector;
-
 import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
-
 import org.rhok.payout2mobile.model.*;
-import com.google.appengine.api.datastore.Key;
 
 public class IdentityController extends AppController {
 	

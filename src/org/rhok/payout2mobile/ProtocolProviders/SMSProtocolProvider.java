@@ -1,9 +1,12 @@
+/***************************************
+ * DO NOT REMOVE
+ * License: BSD License (see LICENSE in the root of this project)
+ * Original Author: Ian Hopkins
+ */
 package org.rhok.payout2mobile.ProtocolProviders;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Vector;
-
 import org.rhok.payout2mobile.controllers.CC;
 import org.rhok.payout2mobile.controllers.PolicyController;
 import org.rhok.payout2mobile.model.*;
